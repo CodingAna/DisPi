@@ -7,15 +7,185 @@
   </head>
   <body>
     <script src="index.js"></script>
-    <script>
-
-    </script>
 
     <div id="background" class="background">
-      <div id="weather" class="bigbox">
+      <div id="largebox" class="box large">
       </div>
-      <div id="data" class="mediumbox">
+      <div id="mediumbox" class="box medium">
+      </div>
+      <div id="smallbox" class="box small">
       </div>
     </div>
+
+    <script>
+    fillBefore = (string, char, length) => {
+      string = string.toString();
+      if (char === undefined) char = "0";
+      if (length === undefined) length = 2;
+
+      var output = "";
+      for (var i = 0; i < (length - string.length); i++) {
+        output += "0"
+      }
+      output += string;
+
+      return output;
+    }
+
+    let largebox = document.getElementById("largebox");
+    let mediumbox = document.getElementById("mediumbox");
+    let smallbox = document.getElementById("smallbox");
+
+    let boxes = {
+      weather: largebox,
+      photo: mediumbox,
+      time: smallbox
+    }
+
+    let b;
+    // Small time box
+    b = document.createElement("div");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.fontFamily = "HelveticaBold";
+    b.style.fontSize = "112px";
+    b.style.color = "white";
+    b.style.textAlign = "center";
+    b.style.position = "relative";
+    b.style.top = "24px";
+    boxes.time.appendChild(b);
+
+    _setTime = () => {
+      let date = new Date();
+      boxes.time.children[0].innerHTML = fillBefore(date.getHours()) + ":" + fillBefore(date.getMinutes()); // + ":" + fillBefore(date.getSeconds());
+    }
+
+    _setTime();
+    setInterval(() => {
+      _setTime();
+    }, 1 * 1000); // 1 sec
+
+
+    // Medium photo box
+    let images = ["DSC01694.JPG", "DSC01751.JPG", "DSC01742.JPG", "DSC01759.JPG"];
+    var imagePosition = parseInt(Math.random() * (images.length));
+    if (imagePosition === images.length) imagePosition = images.length - 1;
+
+    b = document.createElement("img");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.zIndex = "10";
+    b.style.borderRadius = "16px";
+    b.style.position = "relative";
+    b.style.top = "19.6915px"; // Only for a 6000x4000 px image
+    b.style.left = "16px";
+    b.style.width = "372.9231px"; // Only for a 6000x4000 px image
+    b.src = "Photos/" + images[imagePosition]; // Image: 6000x4000 px
+    boxes.photo.appendChild(b);
+
+    // Next image for fade animation
+    b = document.createElement("img");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.zIndex = "9";
+    b.style.borderRadius = "16px";
+    b.style.position = "absolute";
+    b.style.top = "19.6915px"; // Only for a 6000x4000 px image
+    b.style.left = "16px";
+    b.style.width = "372.9231px"; // Only for a 6000x4000 px image
+    b.src = "Photos/" + images[(imagePosition < images.length - 1) ? imagePosition + 1 : 0]; // Image: 6000x4000 px
+    boxes.photo.appendChild(b);
+
+    setInterval(() => {
+      var op = 1;
+      var interval = setInterval(() => {
+        op -= 1 * (1 / 16) / 8; // Decrease opacity from 1 to 0 in 8s each frame (16ms)
+        boxes.photo.children[0].style.opacity = op;
+        if (op <= 0) {
+          boxes.photo.children[0].style.opacity = 0;
+          clearInterval(interval);
+          _moveToFront();
+        }
+      }, 16);
+
+      _moveToFront = () => {
+        // Set background image to the front
+        boxes.photo.children[0].src = boxes.photo.children[1].src;
+        boxes.photo.children[0].style.opacity = 1;
+        boxes.photo.children[1].src = "Photos/" + images[(imagePosition < images.length - 1) ? imagePosition + 1 : 0];
+
+        imagePosition++;
+        if (imagePosition >= images.length) imagePosition = 0;
+      }
+    }, 15 * 1000); // 15 sec
+
+
+    // Large weather box
+    let API_KEY = "e3f43d8ef72586c8f222971f60c6347d"; // remove this later (read it from file?), this is public.
+    let CITY_NAME = "Kettwig";
+
+    b = document.createElement("div");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.fontFamily = "HelveticaBold";
+    b.style.fontSize = "112px";
+    b.style.color = "white";
+    b.style.textAlign = "center";
+    b.style.position = "relative";
+    b.style.top = "48px";
+    boxes.weather.appendChild(b);
+
+    b = document.createElement("div");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.fontFamily = "Helvetica";
+    b.style.fontSize = "30px";
+    b.style.color = "white";
+    b.style.textAlign = "center";
+    b.style.position = "relative";
+    b.style.top = "64px";
+    boxes.weather.appendChild(b);
+
+    b = document.createElement("div");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.fontFamily = "HelveticaBold";
+    b.style.fontSize = "30px";
+    b.style.color = "white";
+    b.style.textAlign = "center";
+    b.style.position = "relative";
+    b.style.top = "96px";
+    boxes.weather.appendChild(b);
+
+    b = document.createElement("img");
+    b.style.padding = "0";
+    b.style.margin = "0";
+    b.style.position = "relative";
+    b.style.top = "114px";
+    b.style.left = "123.5385px";
+    boxes.weather.appendChild(b);
+
+    _loadWeather = () => {
+      fetch("http://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY)
+      .then(response => response.json())
+      .then(result => {
+        let KELVIN = 273.15;
+        let temp = parseInt(result.main.temp - KELVIN);
+        let minTemp = parseInt(result.main.temp_min - KELVIN);
+        let maxTemp = parseInt(result.main.temp - KELVIN);
+        boxes.weather.children[0].innerHTML = temp + "°C";
+        boxes.weather.children[1].innerHTML = CITY_NAME;
+        if (minTemp != maxTemp) boxes.weather.children[2].innerHTML = minTemp + "°C - " + maxTemp + "°C";
+        boxes.weather.children[3].src = "http://openweathermap.org/img/wn/" + result.weather[0].icon + "@2x.png";
+      })
+      .catch(error => console.error(error));
+    }
+
+    _loadWeather();
+    setInterval(() => {
+      _loadWeather();
+    }, 5 * 60 * 1000); // 5 min
+
+    </script>
   </body>
 </html>
