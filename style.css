@@ -1,8 +1,63 @@
 html, body {
   padding: 0;
   margin: 0;
+  overflow: hidden;
+}
+
+@font-face {
+  font-family: Helvetica;
+  src: url(Fonts/Helvetica.ttf);
+}
+
+@font-face {
+  font-family: HelveticaBold;
+  src: url(Fonts/Helvetica-Bold.ttf);
 }
 
 .background {
-  
+  margin: 0;
+  padding: 16px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #white;
+}
+
+.box {
+  border-radius: 16px;
+}
+
+.large {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 16px;
+  left: 436.9231px;
+  width: 347.0769px;
+  height: 448px;
+  background-color: #44597C;
+}
+
+.medium {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 404.9231px;
+  height: 288px;
+  background-color: #7C4459;
+}
+
+.small {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 320px;
+  left: 16px;
+  width: 404.9231px;
+  height: 144px;
+  background-color: #597C44;
 }
