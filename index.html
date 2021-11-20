@@ -166,7 +166,7 @@
     boxes.weather.appendChild(b);
 
     _loadWeather = () => {
-      fetch("http://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY)
+      fetch("https://api.openweathermap.org/data/2.5/weather?q=" + CITY_NAME + "&appid=" + API_KEY)
       .then(response => response.json())
       .then(result => {
         let KELVIN = 273.15;
@@ -176,7 +176,7 @@
         boxes.weather.children[0].innerHTML = temp + "°C";
         boxes.weather.children[1].innerHTML = CITY_NAME;
         if (minTemp != maxTemp) boxes.weather.children[2].innerHTML = minTemp + "°C - " + maxTemp + "°C";
-        boxes.weather.children[3].src = "http://openweathermap.org/img/wn/" + result.weather[0].icon + "@2x.png";
+        boxes.weather.children[3].src = "https://openweathermap.org/img/wn/" + result.weather[0].icon + "@2x.png";
       })
       .catch(error => console.error(error));
     }
